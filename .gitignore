@@ -1,0 +1,34 @@
+logs/
+
+.vscode
+
+__pycache__/
+*.py[cod]
+\#*.py\#
+*$py.class
+
+# Distribution / packaging
+.Python
+.eggs/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Catkin
+.catkin_tools/
+
+# Builds
+build/
+devel/
+logs/
