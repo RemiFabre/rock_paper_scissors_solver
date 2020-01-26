@@ -1,5 +1,4 @@
 # coding: utf-8
-from __future__ import division
 from sympy import *
 from sympy import roots, solve_poly_system
 from sympy import init_printing
@@ -64,7 +63,7 @@ def main():
     print("results = {}".format(results))
     # If the attack is optimal, then any defences yield the same expected value. We can, for example, evaluate one of the "coeffs" with the found attack to calculate the EV:
     print(
-        "Expected value under optimal play from both sides (+ means attack won) = {}".format(
+        "Expected value under optimal play from both sides (+ means attack wins) = {}".format(
             coeffs[0].subs(results)
         )
     )
