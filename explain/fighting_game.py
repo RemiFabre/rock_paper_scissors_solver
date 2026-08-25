@@ -148,7 +148,7 @@ def fig_ledge(game, V, sols, sweep):
     rows, cols, _ = game[LEDGE]
     m = np.array(continuation_matrix(game, LEDGE, V), float)
     sol = sols[LEDGE]
-    fig, axes = plt.subplots(1, 3, figsize=(14.5, 4.4), gridspec_kw={"width_ratios": [1.25, 1, 1]})
+    fig, axes = plt.subplots(1, 3, figsize=(15, 4.4), gridspec_kw={"width_ratios": [1.15, 1, 1], "wspace": 0.45})
 
     ax = axes[0]
     lim = np.abs(m).max()
@@ -158,12 +158,10 @@ def fig_ledge(game, V, sols, sweep):
     for i in range(len(rows)):
         for j in range(len(cols)):
             ax.text(j, i, f"{m[i, j]:+.1f}", ha="center", va="center", fontsize=9, color=INK)
-    ax.set_title("Ledge situation: damage swing + value of what follows", loc="left", fontsize=10, color=INK)
+    ax.set_title("Ledge: damage swing + value of what follows", loc="left", fontsize=10, color=INK)
     ax.set_xlabel("player 2 (on the ledge)")
     ax.set_ylabel("player 1 (on stage)")
     ax.tick_params(colors=INK2)
-    cb = fig.colorbar(im, ax=ax, shrink=0.8, pad=0.02)
-    cb.ax.tick_params(colors=INK2, labelsize=8)
 
     ax = axes[1]
     style(ax)
@@ -176,10 +174,11 @@ def fig_ledge(game, V, sols, sweep):
         ax.text(p + 0.01, yi, f"{p:.2f}", va="center", fontsize=8.5, color=INK)
     ax.set_yticks(y, names, fontsize=8.5)
     ax.set_xlim(0, 0.75)
+    ax.set_ylim(-0.8, len(names) + 0.4)
     ax.set_xlabel("optimal frequency")
     ax.set_title("Optimal mixes at the ledge", loc="left", fontsize=10, color=INK)
-    vtxt = "\n".join(f"{s}: {V[s]:+.2f}" for s in [NEUTRAL, LEDGE, ADV])
-    ax.text(0.74, y[len(rows)] + 0.3, "situation values\n(player 1)\n" + vtxt, ha="right", va="top", fontsize=8, color=INK2)
+    vtxt = ", ".join(f"{s}: {V[s]:+.2f}" for s in [NEUTRAL, LEDGE, ADV])
+    ax.text(0.74, y[0] + 0.9, "situation values (player 1): " + vtxt, ha="right", va="center", fontsize=7.5, color=INK2)
 
     ax = axes[2]
     style(ax)
@@ -353,7 +352,7 @@ def rate_players(log, mats, sols):
 def fig_rating(rating):
     states = [NEUTRAL, LEDGE, LEDGE2, ADV, DISADV]
     fig, axes = plt.subplots(1, 2, figsize=(12, 3.8), sharey=True)
-    w = 0.36
+    w = 0.34
     for ax, key, title in zip(axes, ["leak", "read"], ["Leak: what a perfect reader could take, per encounter",
                                                        "Read: gain over equilibrium play against this opponent"]):
         style(ax)
@@ -362,10 +361,13 @@ def fig_rating(rating):
             vals = [rating[s][key][k] for s in states]
             bars = ax.bar(xs + (k - 0.5) * w, vals, w, color=col, label=who)
             for b, v in zip(bars, vals):
-                ax.text(b.get_x() + w / 2, v + (0.02 if v >= 0 else -0.02), f"{v:+.2f}", ha="center",
-                        va="bottom" if v >= 0 else "top", fontsize=8, color=INK)
+                if abs(v) < 0.005:
+                    continue
+                ax.text(b.get_x() + (w * 0.15 if k else w * 0.85), v + (0.01 if v >= 0 else -0.01), f"{v:+.2f}",
+                        ha="left" if k else "right", va="bottom" if v >= 0 else "top", fontsize=7.5, color=INK)
         ax.axhline(0, color=INK2, lw=0.8)
-        ax.set_xticks(xs, [f"{s}\n(n={rating[s]['n']})" for s in states], fontsize=8.5)
+        short = {NEUTRAL: "neutral", LEDGE: "ledge\n(P2 hangs)", LEDGE2: "ledge\n(P1 hangs)", ADV: "advantage\n(P1)", DISADV: "advantage\n(P2)"}
+        ax.set_xticks(xs, [f"{short[s]}\nn={rating[s]['n']}" for s in states], fontsize=8)
         ax.set_title(title, loc="left", fontsize=10, color=INK)
     axes[0].set_ylabel("damage swing units per encounter")
     axes[0].legend(frameon=False, fontsize=9)
