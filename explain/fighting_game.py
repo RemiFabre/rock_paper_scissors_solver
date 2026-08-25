@@ -237,7 +237,7 @@ def play_rounds(m, attack_mix, reader, e_att, e_read, n, rng):
     return total / n
 
 
-def fig_mechanics_vs_reading(n_rounds=3000, seed=0):
+def fig_mechanics_vs_reading(n_rounds=8000, seed=0):
     m = [[float(v) for v in row] for row in UNBALANCED]
     sol = solve_exact(UNBALANCED)
     nash_def = [float(p) for p in sol.defense]
@@ -308,7 +308,7 @@ def simulate_log(game, V, sols, n=6000, seed=1):
     rng = random.Random(seed)
     mats = {s: [[float(v) for v in row] for row in continuation_matrix(game, s, V)] for s in game}
     # Player 1 leaks at the ledge (waits too much) and reads player 2 in neutral (waits more).
-    # Player 2 leaks in neutral (approaches too much) and reads player 1 at the ledge (attack getup more).
+    # Player 2 leaks in neutral (approaches too much) and reads player 1 at the ledge (jumps more).
     def biased(p, shifts):
         q = [float(v) for v in p]
         for i, dv in shifts.items():
@@ -321,7 +321,7 @@ def simulate_log(game, V, sols, n=6000, seed=1):
     mix1[LEDGE] = biased(mix1[LEDGE], {0: 0.2, 1: -0.1, 2: -0.1})
     mix1[NEUTRAL] = biased(mix1[NEUTRAL], {1: 0.15, 2: -0.15})  # a read: wait beats approach
     mix2[NEUTRAL] = biased(mix2[NEUTRAL], {0: 0.15, 1: -0.15})
-    mix2[LEDGE] = biased(mix2[LEDGE], {1: -0.1, 3: 0.1})
+    mix2[LEDGE] = biased(mix2[LEDGE], {2: 0.15, 3: -0.15})  # a read: jump beats a waiting player
 
     log = []
     state = NEUTRAL

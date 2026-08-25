@@ -123,8 +123,9 @@ def fig_safe_exploitation():
     ax.set_xlim(0, 0.5)
     ax.set_ylim(min(0.0, worst - 0.02), 0.2)
     ax.legend(frameon=False, fontsize=9, loc="lower left", ncol=2)
-    ax.set_title("Safe exploitation: more epsilon buys more against biased opponents. Against a reader the loss "
-                 "grows, but stays far below the budget (the floor is value minus epsilon).", fontsize=9, color=INK2, loc="left")
+    ax.set_title("Safe exploitation: more epsilon buys more against biased opponents.\n"
+                 "Against a reader the loss grows, but stays far below the budget (the floor is value minus epsilon).",
+                 fontsize=9, color=INK2, loc="left")
     fig.savefig(os.path.join(OUT, "safe_exploitation.png"), bbox_inches="tight")
     plt.close(fig)
     return eps, results
