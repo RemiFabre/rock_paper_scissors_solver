@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>The Strongest Option Trap</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#f3f5f7; --bg2:#e9edf1; --ink:#12161b; --ink2:#4d5661; --ink3:#8a929c; --line:#d5dbe2;
+  --c0:#2a78d6; --c1:#eb6834; --c2:#1baf7a; --c3:#eda100;
+  --accent:#eb6834; --good:#0ca30c; --bad:#d03b3b;
+  --heat-lo:#f3f5f7; --heat-hi:#0d366b;
+  --display:"Bricolage Grotesque","Helvetica Neue",Arial,sans-serif;
+  --body:"IBM Plex Sans","Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"IBM Plex Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#14171b; --bg2:#1c2026; --ink:#e6e9ed; --ink2:#aab2bc; --ink3:#6f7883; --line:#2e353d;
+    --c0:#3987e5; --c1:#d95926; --c2:#199e70; --c3:#c98500; --accent:#f07a48;
+    --heat-lo:#14171b; --heat-hi:#86b6ef;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#14171b; --bg2:#1c2026; --ink:#e6e9ed; --ink2:#aab2bc; --ink3:#6f7883; --line:#2e353d;
+  --c0:#3987e5; --c1:#d95926; --c2:#199e70; --c3:#c98500; --accent:#f07a48;
+  --heat-lo:#14171b; --heat-hi:#86b6ef;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+main{max-width:68ch;margin:0 auto;padding:3rem 1.25rem 6rem}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;line-height:1.05;margin:0}
+h1{font-size:clamp(2.6rem,7vw,4.4rem);font-weight:800;letter-spacing:-0.02em}
+h2{font-size:1.7rem;font-weight:700;margin-top:3.5rem}
+h3{font-size:1.15rem;font-weight:700;margin-top:1.6rem}
+p{margin:0.9rem 0}
+.lede{font-size:1.25rem;color:var(--ink2);max-width:60ch}
+.eyebrow{font-family:var(--mono);font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink3);margin:0 0 0.4rem}
+code,.mono{font-family:var(--mono);font-size:0.92em}
+.opt{font-family:var(--mono);font-weight:500;padding:0 0.25em;border-radius:3px}
+.o0{color:var(--c0)} .o1{color:var(--c1)} .o2{color:var(--c2)}
+a{color:var(--accent)}
+.stage{width:min(960px,calc(100vw - 2.5rem));margin:1.5rem calc(50% - min(480px,50vw - 1.25rem));background:var(--bg2);border:1px solid var(--line);border-radius:6px;padding:1.1rem 1.25rem}
+.stage .cap{font-size:0.85rem;color:var(--ink2);margin:0.6rem 0 0}
+.row{display:flex;gap:1.5rem;flex-wrap:wrap;align-items:flex-start}
+.col{flex:1 1 280px;min-width:0}
+table.mat{border-collapse:separate;border-spacing:4px;font-family:var(--mono);font-variant-numeric:tabular-nums}
+table.mat th{font-weight:500;font-size:0.85rem;padding:2px 6px}
+table.mat td{padding:0}
+table.mat input{width:3.6rem;padding:0.35rem 0.2rem;text-align:center;font:inherit;font-size:1rem;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:4px}
+table.mat input:focus{outline:2px solid var(--accent);outline-offset:1px}
+.btn{font:inherit;font-size:0.88rem;padding:0.4rem 0.75rem;border-radius:4px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+.btn:hover{border-color:var(--ink3)} .btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn.primary{background:var(--accent);color:#fff;border-color:transparent}
+.btns{display:flex;gap:0.5rem;flex-wrap:wrap;margin:0.6rem 0}
+.result{font-family:var(--mono);font-size:0.95rem;line-height:1.7;font-variant-numeric:tabular-nums}
+.result b{font-weight:500;color:var(--ink2)}
+.bars{display:grid;grid-template-columns:auto 1fr auto;gap:0.35rem 0.6rem;align-items:center;font-family:var(--mono);font-size:0.9rem}
+.bar{height:14px;border-radius:3px;background:var(--line);position:relative;overflow:hidden}
+.bar i{position:absolute;top:0;bottom:0;left:0;display:block;border-radius:3px}
+canvas{display:block;max-width:100%}
+label.sl{display:grid;grid-template-columns:3.2rem 1fr 3.5rem;gap:0.6rem;align-items:center;font-family:var(--mono);font-size:0.9rem;margin:0.3rem 0}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.stat{display:flex;gap:2rem;flex-wrap:wrap;margin:0.5rem 0}
+.stat div{font-family:var(--mono);font-size:0.85rem;color:var(--ink2)} .stat b{display:block;font-size:1.5rem;font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums}
+.play{display:flex;gap:0.6rem;margin:0.6rem 0}
+.play button{flex:1;font:inherit;font-family:var(--display);font-weight:700;font-size:1.3rem;padding:0.9rem 0;border-radius:6px;border:2px solid transparent;color:#fff;cursor:pointer}
+.play button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.play .p0{background:var(--c0)} .play .p1{background:var(--c1)} .play .p2{background:var(--c2)}
+.log{font-family:var(--mono);font-size:0.8rem;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:0.4rem}
+.note{border-left:3px solid var(--accent);padding:0.2rem 0 0.2rem 1rem;color:var(--ink2);margin:1.2rem 0}
+.formula{font-family:var(--mono);background:var(--bg2);border:1px solid var(--line);border-radius:4px;padding:0.7rem 0.9rem;overflow-x:auto;font-size:0.95rem;line-height:1.7}
+hr{border:0;border-top:1px solid var(--line);margin:3rem 0}
+.footer{color:var(--ink3);font-size:0.85rem}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+</head>
+<body>
+<main>
+<p class="eyebrow">Generalised rock paper scissors</p>
+<h1>The Strongest Option Trap</h1>
+<p class="lede">When one option beats more things than the others, you should not play it more often. Here is why, with a solver you can poke at and a reader you can try to beat.</p>
+
+<h2>1. The game</h2>
+<p>Two players pick simultaneously. The attacker picks a row, the defender picks a column, and the cell says who wins: <code>+1</code> the attacker, <code>-1</code> the defender, <code>0</code> nobody. Plain rock paper scissors is the Balanced preset below. In the Unbalanced preset, <span class="opt o1">A1</span> also beats <span class="opt o2">D2</span>: it wins against two of the three defences, while every other option wins against one.</p>
+
+<div class="stage">
+  <div class="row">
+    <div class="col">
+      <p class="eyebrow">Edit the payoff matrix</p>
+      <table class="mat" id="matrix"></table>
+      <div class="btns">
+        <button class="btn" data-preset="balanced">Balanced</button>
+        <button class="btn primary" data-preset="unbalanced">Unbalanced (A1 beats D2)</button>
+        <button class="btn" data-preset="risky">High risk A0</button>
+        <button class="btn" data-preset="dominated">Dominated option</button>
+      </div>
+    </div>
+    <div class="col">
+      <p class="eyebrow">Optimal play</p>
+      <div class="result" id="solution"></div>
+      <div class="bars" id="mixbars" style="margin-top:0.6rem"></div>
+    </div>
+  </div>
+  <p class="cap">Exact solution by enumerating square sub-matrices (Shapley and Snow, 1950), the same method as <code>rps_solver.py</code>. Optimal means: the mix whose worst case is best. Against it, the opponent gains nothing by knowing it.</p>
+</div>
+
+<p>Rock paper scissors solves to a third each, with value zero. The unbalanced game solves to <span class="opt o0">A0</span> 4/9, <span class="opt o1">A1</span> 3/9, <span class="opt o2">A2</span> 2/9. The option that wins against two defences is played less than the option that wins against one. The attacker still comes out ahead: the game is worth +1/9 per round to them.</p>
+
+<h2>2. Why you cannot just play the strong option</h2>
+<p>The defender is not a coin. If <span class="opt o1">A1</span> shows up half the time, <span class="opt o0">D0</span> (the only defence that beats it) becomes the obvious answer, and the attacker's habit turns into the defender's income. Drag the point below: it is the attacker's mix, and the bars show what each defence would earn against it. A defender who knows your mix picks the lowest bar. That lowest bar is all you actually keep.</p>
+
+<div class="stage">
+  <div class="row">
+    <div class="col" style="flex:1.1 1 300px">
+      <canvas id="tri" width="520" height="470"></canvas>
+      <div class="btns">
+        <button class="btn" data-mix="0.3333,0.3333,0.3334">Uniform</button>
+        <button class="btn" data-mix="0.25,0.5,0.25">Intuitive 25/50/25</button>
+        <button class="btn primary" data-mix="opt">Optimal</button>
+        <label style="font-size:0.85rem;display:flex;gap:0.4rem;align-items:center;margin-left:auto"><input type="checkbox" id="regions"> colour by punishing defence</label>
+      </div>
+    </div>
+    <div class="col">
+      <p class="eyebrow">Attack mix</p>
+      <label class="sl"><span class="o0">A0</span><input type="range" id="s0" min="0" max="1" step="0.005"><span id="v0"></span></label>
+      <label class="sl"><span class="o1">A1</span><input type="range" id="s1" min="0" max="1" step="0.005"><span id="v1"></span></label>
+      <label class="sl"><span class="o2">A2</span><input type="range" id="s2" min="0" max="1" step="0.005"><span id="v2"></span></label>
+      <p class="eyebrow" style="margin-top:1rem">What each defence earns the attacker</p>
+      <div class="bars" id="defbars"></div>
+      <div class="stat">
+        <div>guaranteed per round<b id="guar"></b></div>
+        <div>given away vs optimal<b id="expl"></b></div>
+      </div>
+    </div>
+  </div>
+  <p class="cap">Shade: how much the mix guarantees (dark is good). The peak is the optimum, and it is exactly where all three defences earn the same. Tick the box to see which defence punishes each region of the triangle.</p>
+</div>
+
+<h2>3. Indifference: the optimum is where the opponent stops caring</h2>
+<p>Look at the bars when the point sits on the optimum: the three are level. That is not a coincidence, it is the definition. If one defence earned less than the others, the defender would never pick it, and the attacker could shift weight to punish the defences that remain. The attack mix is chosen so that the defender has nothing to choose. Solving those equalities is all the solver does:</p>
+<div class="formula">
+attacker's payoff if the defender plays D0:  A0 - A1<br>
+attacker's payoff if the defender plays D1:  A1 - A2<br>
+attacker's payoff if the defender plays D2:  -A0 + A1 + A2<br>
+set all three equal, add A0 + A1 + A2 = 1  →  A = [4/9, 3/9, 2/9], each line worth 1/9
+</div>
+<p>Read the first two lines again. <span class="opt o1">A1</span> is the option <span class="opt o0">D0</span> wants to see and <span class="opt o1">D1</span> fears. Its frequency is set by the balance between those two defences, and by nothing else. In particular, it is not set by how strong <span class="opt o1">A1</span> is against <span class="opt o2">D2</span>.</p>
+
+<div class="note">Your frequencies are decided by the opponent's incentives, not by your own options' strength. The strong option's job is to make its counter worth playing; the counter's counter is what you end up playing most.</div>
+
+<h2>4. Buffing an option does not make it played more</h2>
+<p>Slide the payoff of <span class="opt o1">A1</span> against <span class="opt o2">D2</span> from 0 (a neutral trade) to 3 (a crushing win). The optimal frequency of <span class="opt o1">A1</span> stays at exactly one third. The buff flows elsewhere: the defender leans harder on <span class="opt o0">D0</span> to keep <span class="opt o1">A1</span> in check, so the attacker plays more <span class="opt o0">A0</span>, the option that beats <span class="opt o0">D0</span>. At 3, <span class="opt o2">A2</span> is not needed at all.</p>
+
+<div class="stage">
+  <label class="sl" style="grid-template-columns:8rem 1fr 3.5rem"><span>A1 vs D2</span><input type="range" id="buff" min="0" max="3" step="0.05" value="1"><span id="buffv">1.00</span></label>
+  <div class="row">
+    <div class="col"><p class="eyebrow">Optimal attack</p><div class="bars" id="buffA"></div></div>
+    <div class="col"><p class="eyebrow">Optimal defence</p><div class="bars" id="buffD"></div></div>
+    <div class="col" style="flex:0 0 150px"><p class="eyebrow">Value</p><div class="stat"><div>per round<b id="buffV"></b></div></div></div>
+  </div>
+  <canvas id="buffplot" width="920" height="220"></canvas>
+  <p class="cap">Lines: optimal attack frequencies as the buff grows. The orange line is flat.</p>
+</div>
+
+<h2>5. Try to beat a reader</h2>
+<p>Play the attacker with the buttons. The defender does nothing clever: it watches the last few moves you made, predicts the next one from those patterns, and plays the counter. Most people are down within forty rounds. Then hand over to the optimal mix and watch the score drift up at 1/9 per round, whatever the reader tries.</p>
+
+<div class="stage">
+  <div class="play">
+    <button class="p0" data-play="0">A0</button>
+    <button class="p1" data-play="1">A1</button>
+    <button class="p2" data-play="2">A2</button>
+  </div>
+  <div class="stat">
+    <div>rounds<b id="pr"></b></div>
+    <div>your score<b id="ps"></b></div>
+    <div>per round<b id="pa"></b></div>
+    <div>reader predicted you<b id="pp"></b></div>
+  </div>
+  <canvas id="scoreplot" width="920" height="200"></canvas>
+  <div class="log" id="plog"></div>
+  <div class="btns">
+    <button class="btn primary" id="auto">Let the optimal mix play 300 rounds</button>
+    <button class="btn" id="autoint">Let the intuitive mix play 300 rounds</button>
+    <button class="btn" id="reset">Reset</button>
+  </div>
+  <p class="cap">The reader is a small context model over your last three moves (with fallbacks to shorter contexts), best-replying to its prediction. It exploits any regularity. Against a truly random optimal mix its prediction is worthless.</p>
+</div>
+
+<h2>6. What "optimal" does and does not mean</h2>
+<p>The optimal mix is a floor. It guarantees the game's value no matter who is on the other side, and it cannot be read because there is nothing to read. But it is not a ceiling. In the balanced game its value is zero: it never loses, and never wins. Against an opponent who plays badly it does not win more than 1/9 per round either, because it was designed against the best possible defender, not this one.</p>
+<p>Beating people rather than drawing with them requires a second layer: model the opponent, best-reply to the model, and bound how far from the floor you are willing to stand. The companion documents in the repository cover that layer (safe exploitation, and how many rounds it takes to prove an edge), and a way to apply all of this to fighting games, where each encounter is a small matrix like the ones above and the entries depend on the situation.</p>
+
+<hr>
+<p class="footer">Source, solver, tests, figures and the companion documents: <a href="https://github.com/RemiFabre/rock_paper_scissors_solver">github.com/RemiFabre/rock_paper_scissors_solver</a>. Rows are attacks, columns defences, entries the attacker's payoff.</p>
+</main>
+
+<script>
+(() => {
+'use strict';
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const COL = () => [css('--c0'), css('--c1'), css('--c2'), css('--c3')];
+const PRESETS = {
+  balanced: [[1,0,-1],[-1,1,0],[0,-1,1]],
+  unbalanced: [[1,0,-1],[-1,1,1],[0,-1,1]],
+  risky: [[1.5,0,-1.5],[-1,1,1],[0,-1,1]],
+  dominated: [[1,0,-1],[-1,1,1],[-1,0,-1]],
+};
+let M = PRESETS.unbalanced.map(r => r.slice());
+
+// ---------- exact-ish solver (Shapley-Snow kernels, floats, certified) ----------
+function solveLinear(a, b) {
+  const n = a.length, A = a.map((r, i) => r.concat([b[i]]));
+  for (let c = 0; c < n; c++) {
+    let p = c; for (let r = c; r < n; r++) if (Math.abs(A[r][c]) > Math.abs(A[p][c])) p = r;
+    if (Math.abs(A[p][c]) < 1e-12) return null;
+    [A[c], A[p]] = [A[p], A[c]];
+    const d = A[c][c]; for (let k = 0; k <= n; k++) A[c][k] /= d;
+    for (let r = 0; r < n; r++) if (r !== c && A[r][c] !== 0) { const f = A[r][c]; for (let k = 0; k <= n; k++) A[r][k] -= f * A[c][k]; }
+  }
+  return A.map(r => r[n]);
+}
+function combos(n, k, s = 0, cur = [], out = []) { if (cur.length === k) { out.push(cur.slice()); return out; } for (let i = s; i < n; i++) { cur.push(i); combos(n, k, i + 1, cur, out); cur.pop(); } return out; }
+function defPayoffs(m, x) { return m[0].map((_, j) => m.reduce((s, r, i) => s + x[i] * r[j], 0)); }
+function attPayoffs(m, y) { return m.map(r => r.reduce((s, v, j) => s + v * y[j], 0)); }
+function isOptimal(m, x, y, v) {
+  const e = 1e-9;
+  if (x.some(t => t < -e) || y.some(t => t < -e)) return false;
+  return defPayoffs(m, x).every(p => p >= v - e) && attPayoffs(m, y).every(p => p <= v + e);
+}
+function solve(m) {
+  const n = m.length, k = m[0].length;
+  for (let size = Math.min(n, k); size >= 1; size--) {
+    for (const rows of combos(n, size)) for (const cols of combos(k, size)) {
+      const sub = rows.map(i => cols.map(j => m[i][j]));
+      const a1 = cols.map((_, j) => rows.map((_, i) => sub[i][j]).concat([-1])); a1.push(Array(size).fill(1).concat([0]));
+      const b = Array(size).fill(0).concat([1]);
+      const sx = solveLinear(a1, b); if (!sx) continue;
+      const a2 = rows.map((_, i) => cols.map((_, j) => sub[i][j]).concat([-1])); a2.push(Array(size).fill(1).concat([0]));
+      const sy = solveLinear(a2, b); if (!sy) continue;
+      const x = Array(n).fill(0), y = Array(k).fill(0);
+      rows.forEach((r, i) => x[r] = Math.max(0, sx[i])); cols.forEach((c, j) => y[c] = Math.max(0, sy[j]));
+      const v = sx[size];
+      if (isOptimal(m, x, y, v)) return { x, y, v };
+    }
+  }
+  return null;
+}
+function frac(v, maxD = 999) {
+  if (Math.abs(v - Math.round(v)) < 1e-9) return String(Math.round(v));
+  let best = [0, 1], err = 1;
+  for (let d = 1; d <= maxD; d++) { const nn = Math.round(v * d); const e = Math.abs(v - nn / d); if (e < err - 1e-12) { err = e; best = [nn, d]; if (e < 1e-9) break; } }
+  return err < 1e-6 ? `${best[0]}/${best[1]}` : v.toFixed(3);
+}
+const f2 = v => (v >= 0 ? '+' : '') + v.toFixed(2);
+
+// ---------- matrix editor ----------
+const matEl = document.getElementById('matrix');
+function renderMatrix() {
+  let h = '<tr><th></th>' + M[0].map((_, j) => `<th class="o${j}">D${j}</th>`).join('') + '</tr>';
+  M.forEach((r, i) => { h += `<tr><th class="o${i}">A${i}</th>` + r.map((v, j) => `<td><input type="text" inputmode="decimal" value="${v}" data-i="${i}" data-j="${j}" aria-label="A${i} vs D${j}"></td>`).join('') + '</tr>'; });
+  matEl.innerHTML = h;
+  matEl.querySelectorAll('input').forEach(inp => inp.addEventListener('change', e => {
+    const v = parseFloat(e.target.value); if (!isNaN(v)) { M[+e.target.dataset.i][+e.target.dataset.j] = v; } else e.target.value = M[+e.target.dataset.i][+e.target.dataset.j];
+    update();
+  }));
+}
+function bars(el, vals, labels, colors, fmt = frac, max = 1) {
+  el.innerHTML = vals.map((v, i) => `<span style="color:${colors[i]}">${labels[i]}</span><div class="bar"><i style="width:${Math.max(0, Math.min(1, v / max)) * 100}%;background:${colors[i]}"></i></div><span>${fmt(v)}</span>`).join('');
+}
+let SOL = null;
+function updateSolution() {
+  SOL = solve(M);
+  const el = document.getElementById('solution');
+  if (!SOL) { el.textContent = 'no solution found'; return; }
+  el.innerHTML = `<b>attack </b> [${SOL.x.map(v => frac(v)).join(', ')}]<br><b>defence</b> [${SOL.y.map(v => frac(v)).join(', ')}]<br><b>value  </b> ${frac(SOL.v)} (${f2(SOL.v)} per round for the attacker)`;
+  const c = COL();
+  bars(document.getElementById('mixbars'), SOL.x.concat(SOL.y), ['A0','A1','A2','D0','D1','D2'], c.slice(0,3).concat(c.slice(0,3)));
+}
+
+// ---------- triangle landscape ----------
+const tri = document.getElementById('tri'), tctx = tri.getContext('2d');
+let mix = [4/9, 3/9, 2/9];
+const TW = tri.width, TH = tri.height, PAD = 60;
+const side = TW - 2 * PAD, hgt = side * Math.sqrt(3) / 2, top = (TH - hgt) / 2 + 10;
+const corners = [[PAD, top + hgt], [PAD + side, top + hgt], [PAD + side / 2, top]];
+const toXY = m => [m[0] * corners[0][0] + m[1] * corners[1][0] + m[2] * corners[2][0], m[0] * corners[0][1] + m[1] * corners[1][1] + m[2] * corners[2][1]];
+function toBary(px, py) {
+  const [x0, y0] = corners[0], [x1, y1] = corners[1], [x2, y2] = corners[2];
+  const det = (y1 - y2) * (x0 - x2) + (x2 - x1) * (y0 - y2);
+  let l0 = ((y1 - y2) * (px - x2) + (x2 - x1) * (py - y2)) / det, l1 = ((y2 - y0) * (px - x2) + (x0 - x2) * (py - y2)) / det;
+  let l2 = 1 - l0 - l1;
+  l0 = Math.max(0, l0); l1 = Math.max(0, l1); l2 = Math.max(0, l2); const s = l0 + l1 + l2; return [l0 / s, l1 / s, l2 / s];
+}
+function hex2rgb(h) { h = h.replace('#', ''); return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)]; }
+let heat = null;
+function renderHeat() {
+  const regions = document.getElementById('regions').checked;
+  const img = tctx.createImageData(TW, TH), d = img.data;
+  const lo = hex2rgb(css('--heat-lo')), hi = hex2rgb(css('--heat-hi')), cols = COL().map(hex2rgb), bg = hex2rgb(css('--bg2'));
+  const vmin = -Math.max(...M.flat().map(Math.abs)), vmax = SOL ? SOL.v : 0;
+  for (let y = 0; y < TH; y++) for (let x = 0; x < TW; x++) {
+    const i = (y * TW + x) * 4;
+    const [x0, y0] = corners[0], [x1, y1] = corners[1], [x2, y2] = corners[2];
+    const det = (y1 - y2) * (x0 - x2) + (x2 - x1) * (y0 - y2);
+    const l0 = ((y1 - y2) * (x - x2) + (x2 - x1) * (y - y2)) / det, l1 = ((y2 - y0) * (x - x2) + (x0 - x2) * (y - y2)) / det, l2 = 1 - l0 - l1;
+    if (l0 < 0 || l1 < 0 || l2 < 0) { d[i] = bg[0]; d[i + 1] = bg[1]; d[i + 2] = bg[2]; d[i + 3] = 255; continue; }
+    const p = defPayoffs(M, [l0, l1, l2]);
+    let c;
+    if (regions) { let j = 0; for (let k = 1; k < p.length; k++) if (p[k] < p[j]) j = k; c = cols[j].map((v, q) => Math.round(0.55 * v + 0.45 * bg[q])); }
+    else { const w = Math.min(...p); const t = Math.pow(Math.max(0, Math.min(1, (w - vmin) / (vmax - vmin + 1e-9))), 1.6); c = lo.map((v, q) => Math.round(v + (hi[q] - v) * t)); }
+    d[i] = c[0]; d[i + 1] = c[1]; d[i + 2] = c[2]; d[i + 3] = 255;
+  }
+  heat = img;
+}
+function drawTri() {
+  if (!heat) renderHeat();
+  tctx.putImageData(heat, 0, 0);
+  const c = COL();
+  tctx.strokeStyle = css('--ink3'); tctx.lineWidth = 1;
+  tctx.beginPath(); tctx.moveTo(...corners[0]); tctx.lineTo(...corners[1]); tctx.lineTo(...corners[2]); tctx.closePath(); tctx.stroke();
+  tctx.font = '700 15px ' + css('--display'); tctx.textAlign = 'center'; tctx.textBaseline = 'middle';
+  const labs = ['A0 always', 'A1 always', 'A2 always'], off = [[-10, 18], [10, 18], [0, -16]];
+  labs.forEach((l, i) => { tctx.fillStyle = c[i]; tctx.fillText(l, corners[i][0] + off[i][0], corners[i][1] + off[i][1]); });
+  if (SOL) { const [sx, sy] = toXY(SOL.x); tctx.fillStyle = css('--ink'); star(sx, sy, 9); tctx.font = '12px ' + css('--mono'); tctx.textAlign = 'left'; tctx.fillText('optimal', sx + 12, sy + 14); }
+  const [px, py] = toXY(mix);
+  tctx.beginPath(); tctx.arc(px, py, 9, 0, Math.PI * 2); tctx.fillStyle = css('--accent'); tctx.fill(); tctx.strokeStyle = css('--bg'); tctx.lineWidth = 2; tctx.stroke();
+}
+function star(x, y, r) { tctx.beginPath(); for (let k = 0; k < 10; k++) { const a = -Math.PI / 2 + k * Math.PI / 5, rr = k % 2 ? r * 0.45 : r; tctx.lineTo(x + rr * Math.cos(a), y + rr * Math.sin(a)); } tctx.closePath(); tctx.fill(); }
+let dragging = false;
+const ptr = e => { const r = tri.getBoundingClientRect(); const s = TW / r.width; return [(e.clientX - r.left) * s, (e.clientY - r.top) * s]; };
+tri.addEventListener('pointerdown', e => { dragging = true; tri.setPointerCapture(e.pointerId); setMix(toBary(...ptr(e))); });
+tri.addEventListener('pointermove', e => { if (dragging) setMix(toBary(...ptr(e))); });
+tri.addEventListener('pointerup', () => dragging = false);
+tri.addEventListener('pointercancel', () => dragging = false);
+function setMix(m) { mix = m; updateMix(); }
+const sl = [0, 1, 2].map(i => document.getElementById('s' + i));
+sl.forEach((s, i) => s.addEventListener('input', () => {
+  const v = +s.value, others = [0, 1, 2].filter(k => k !== i), rest = 1 - v, cur = mix[others[0]] + mix[others[1]];
+  const m = [0, 0, 0]; m[i] = v;
+  if (cur > 1e-9) { m[others[0]] = mix[others[0]] / cur * rest; m[others[1]] = mix[others[1]] / cur * rest; } else { m[others[0]] = m[others[1]] = rest / 2; }
+  setMix(m);
+}));
+document.querySelectorAll('[data-mix]').forEach(b => b.addEventListener('click', () => setMix(b.dataset.mix === 'opt' ? SOL.x.slice() : b.dataset.mix.split(',').map(Number))));
+document.getElementById('regions').addEventListener('change', () => { heat = null; drawTri(); });
+function updateMix() {
+  sl.forEach((s, i) => { s.value = mix[i]; document.getElementById('v' + i).textContent = mix[i].toFixed(2); });
+  const p = defPayoffs(M, mix), worst = Math.min(...p), c = COL();
+  const el = document.getElementById('defbars');
+  const max = Math.max(1, ...p.map(Math.abs));
+  el.innerHTML = p.map((v, j) => `<span style="color:${c[j]}">D${j}</span><div class="bar" style="background:linear-gradient(to right,var(--line) 50%,var(--line) 50%)"><i style="left:${v >= 0 ? 50 : 50 + v / max * 50}%;width:${Math.abs(v) / max * 50}%;background:${c[j]};opacity:${v === worst ? 1 : 0.4}"></i></div><span style="font-weight:${v === worst ? 600 : 400}">${f2(v)}</span>`).join('');
+  document.getElementById('guar').textContent = f2(worst);
+  document.getElementById('expl').textContent = SOL ? f2(worst - SOL.v) : '';
+  drawTri();
+}
+
+// ---------- buff ----------
+const buff = document.getElementById('buff');
+function buffMatrix(t) { return [[1, 0, -1], [-1, 1, t], [0, -1, 1]]; }
+function updateBuff() {
+  const t = +buff.value; document.getElementById('buffv').textContent = t.toFixed(2);
+  const s = solve(buffMatrix(t)), c = COL();
+  bars(document.getElementById('buffA'), s.x, ['A0', 'A1', 'A2'], c);
+  bars(document.getElementById('buffD'), s.y, ['D0', 'D1', 'D2'], c);
+  document.getElementById('buffV').textContent = frac(s.v);
+  const cv = document.getElementById('buffplot'), g = cv.getContext('2d'), W = cv.width, H = cv.height, L = 50, R = 40, T = 14, B = 34;
+  g.clearRect(0, 0, W, H);
+  g.strokeStyle = css('--line'); g.fillStyle = css('--ink3'); g.font = '11px ' + css('--mono'); g.textAlign = 'right';
+  for (const yv of [0, 1 / 3, 2 / 3]) { const y = T + (1 - yv / 0.75) * (H - T - B); g.beginPath(); g.moveTo(L, y); g.lineTo(W - R, y); g.stroke(); g.fillText(frac(yv), L - 6, y + 4); }
+  g.textAlign = 'center';
+  for (let xv = 0; xv <= 3; xv++) { const x = L + xv / 3 * (W - L - R); g.fillText(xv, x, H - 12); }
+  g.fillText('payoff of A1 against D2', W / 2, H - 1);
+  const N = 61;
+  for (let i = 0; i < 3; i++) {
+    g.strokeStyle = c[i]; g.lineWidth = 2.2; g.beginPath();
+    for (let k = 0; k < N; k++) { const tt = k * 3 / (N - 1); const ss = solve(buffMatrix(tt)); const x = L + tt / 3 * (W - L - R), y = T + (1 - ss.x[i] / 0.75) * (H - T - B); k ? g.lineTo(x, y) : g.moveTo(x, y); }
+    g.stroke();
+  }
+  const x = L + t / 3 * (W - L - R); g.strokeStyle = css('--ink2'); g.lineWidth = 1; g.setLineDash([3, 3]); g.beginPath(); g.moveTo(x, T); g.lineTo(x, H - B); g.stroke(); g.setLineDash([]);
+  s.x.forEach((v, i) => { g.fillStyle = c[i]; g.beginPath(); g.arc(x, T + (1 - v / 0.75) * (H - T - B), 4.5, 0, Math.PI * 2); g.fill(); });
+}
+buff.addEventListener('input', updateBuff);
+
+// ---------- play vs reader ----------
+const P = { hist: [], score: [0], preds: 0, hits: 0 };
+const OPT = [4 / 9, 3 / 9, 2 / 9], INT = [0.25, 0.5, 0.25];
+function readerPredict() {
+  // context model over the last 3 moves, fall back to shorter contexts; needs 2 observations to trust a context
+  const h = P.hist;
+  for (let k = 3; k >= 1; k--) {
+    if (h.length <= k) continue;
+    const ctx = h.slice(-k).join(''), counts = [0, 0, 0];
+    for (let i = k; i < h.length; i++) if (h.slice(i - k, i).join('') === ctx) counts[h[i]]++;
+    const tot = counts.reduce((a, b) => a + b, 0);
+    if (tot >= 2) return counts.map(v => v / tot);
+  }
+  const counts = [1, 1, 1]; h.forEach(a => counts[a]++); const tot = counts.reduce((a, b) => a + b, 0); return counts.map(v => v / tot);
+}
+function readerAct() {
+  const pred = readerPredict();
+  const p = defPayoffs(PRESETS.unbalanced, pred);
+  let j = 0; for (let k = 1; k < 3; k++) if (p[k] < p[j] - 1e-12) j = k;
+  const ties = p.map((v, k) => Math.abs(v - p[j]) < 1e-12 ? k : -1).filter(k => k >= 0);
+  return { d: ties[Math.floor(Math.random() * ties.length)], pred };
+}
+function playRound(a, who) {
+  const { d, pred } = readerAct();
+  let g = 0; for (let k = 1; k < 3; k++) if (pred[k] > pred[g]) g = k;
+  P.preds++; if (g === a) P.hits++;
+  const pay = PRESETS.unbalanced[a][d];
+  P.hist.push(a); P.score.push(P.score[P.score.length - 1] + pay);
+  return { d, pay, who };
+}
+const logEl = document.getElementById('plog');
+let logItems = [];
+function afterRound(r, a) {
+  logItems.push(`${r.who}A${a} vs D${r.d} ${r.pay > 0 ? 'win' : r.pay < 0 ? 'loss' : 'tie'}`);
+  if (logItems.length > 12) logItems.shift();
+  logEl.textContent = logItems.join('   ');
+  updatePlay();
+}
+document.querySelectorAll('[data-play]').forEach(b => b.addEventListener('click', () => { const a = +b.dataset.play; afterRound(playRound(a, ''), a); }));
+function autoPlay(mixv, label) {
+  let n = 0;
+  const step = () => { for (let k = 0; k < 5 && n < 300; k++, n++) { const r = Math.random(); const a = r < mixv[0] ? 0 : r < mixv[0] + mixv[1] ? 1 : 2; const res = playRound(a, label); if (n === 299 || k === 4) afterRound(res, a); else { logItems.push(`${label}A${a} vs D${res.d}`); if (logItems.length > 12) logItems.shift(); } } if (n < 300) requestAnimationFrame(step); };
+  step();
+}
+document.getElementById('auto').addEventListener('click', () => autoPlay(OPT, '*'));
+document.getElementById('autoint').addEventListener('click', () => autoPlay(INT, '~'));
+document.getElementById('reset').addEventListener('click', () => { P.hist = []; P.score = [0]; P.preds = 0; P.hits = 0; logItems = []; logEl.textContent = ''; updatePlay(); });
+function updatePlay() {
+  const n = P.hist.length, s = P.score[n];
+  document.getElementById('pr').textContent = n;
+  document.getElementById('ps').textContent = (s >= 0 ? '+' : '') + s;
+  document.getElementById('pa').textContent = n ? f2(s / n) : '';
+  document.getElementById('pp').textContent = P.preds ? Math.round(100 * P.hits / P.preds) + '%' : '';
+  const cv = document.getElementById('scoreplot'), g = cv.getContext('2d'), W = cv.width, H = cv.height, L = 44, R = 16, T = 10, B = 24;
+  g.clearRect(0, 0, W, H);
+  const N = Math.max(50, n), lo = Math.min(-5, ...P.score), hi = Math.max(5, ...P.score);
+  const X = i => L + i / N * (W - L - R), Y = v => T + (hi - v) / (hi - lo) * (H - T - B);
+  g.strokeStyle = css('--line'); g.beginPath(); g.moveTo(L, Y(0)); g.lineTo(W - R, Y(0)); g.stroke();
+  g.fillStyle = css('--ink3'); g.font = '11px ' + css('--mono'); g.textAlign = 'right';
+  g.fillText(hi, L - 6, Y(hi) + 4); g.fillText(lo, L - 6, Y(lo) + 4); g.fillText('0', L - 6, Y(0) + 4);
+  g.textAlign = 'center'; g.fillText('round', W / 2, H - 6);
+  // guide: +1/9 per round from the start
+  g.strokeStyle = css('--c0'); g.setLineDash([3, 4]); g.beginPath(); g.moveTo(X(0), Y(0)); g.lineTo(X(N), Y(N / 9)); g.stroke(); g.setLineDash([]);
+  g.textAlign = 'left'; g.fillStyle = css('--c0'); g.fillText('+1/9 per round', X(N * 0.6) + 4, Y(N * 0.6 / 9) - 10);
+  g.strokeStyle = css('--ink'); g.lineWidth = 2; g.beginPath(); P.score.forEach((v, i) => i ? g.lineTo(X(i), Y(v)) : g.moveTo(X(0), Y(v))); g.stroke();
+  if (n) { g.fillStyle = css('--accent'); g.beginPath(); g.arc(X(n), Y(s), 4, 0, Math.PI * 2); g.fill(); }
+}
+
+// ---------- wiring ----------
+function update() { updateSolution(); heat = null; updateMix(); }
+document.querySelectorAll('[data-preset]').forEach(b => b.addEventListener('click', () => { M = PRESETS[b.dataset.preset].map(r => r.slice()); renderMatrix(); update(); if (SOL) setMix(SOL.x.slice()); }));
+renderMatrix(); update(); updateBuff(); updatePlay();
+const mq = matchMedia('(prefers-color-scheme: dark)');
+mq.addEventListener('change', () => { heat = null; update(); updateBuff(); updatePlay(); });
+new MutationObserver(() => { heat = null; update(); updateBuff(); updatePlay(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+})();
+</script>
+</body>
+</html>
